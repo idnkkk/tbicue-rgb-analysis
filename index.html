@@ -34,6 +34,46 @@
 
 <input type="file" id="imageInput" accept="image/*">
 
+<h3>키트 촬영</h3>
+
+<div style="
+  position:relative;
+  width:100%;
+  max-width:500px;
+  margin:auto;
+  overflow:hidden;
+  border-radius:12px;
+  background:#222;
+">
+  <video id="cameraPreview"
+    autoplay
+    playsinline
+    muted
+    style="display:block;width:100%;">
+  </video>
+
+  <div style="
+    position:absolute;
+    left:5%;
+    top:25%;
+    width:90%;
+    height:50%;
+    border:3px dashed #168B90;
+    border-radius:10px;
+    box-sizing:border-box;
+    pointer-events:none;
+  "></div>
+</div>
+
+<p style="text-align:center;">
+  키트를 가이드라인 안에 맞춰주세요.
+</p>
+
+<button id="startCameraBtn" type="button">
+  카메라 켜기
+</button>
+
+  
 <br><br>
 
 
