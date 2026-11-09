@@ -94,10 +94,44 @@
 
     ctx.drawImage(preview, 0, 0);
 
-    const pixel = ctx.getImageData(x, y, 1, 1).data;
+   
+const size = 10;
 
-    document.getElementById("rgbResult").textContent =
-      `RGB: (${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+// 클릭 위치를 중심으로 측정 영역 설정
+const startX = Math.max(0, x - 5);
+const startY = Math.max(0, y - 5);
+
+const width = Math.min(size, canvas.width - startX);
+const height = Math.min(size, canvas.height - startY);
+
+// 영역 내 픽셀 데이터 가져오기
+const imageData = ctx.getImageData(
+  startX, startY, width, height
+);
+
+const pixels = imageData.data;
+
+let totalR = 0;
+let totalG = 0;
+let totalB = 0;
+let count = 0;
+
+// 각 픽셀의 RGB 합산
+for (let i = 0; i < pixels.length; i += 4) {
+  totalR += pixels[i];
+  totalG += pixels[i + 1];
+  totalB += pixels[i + 2];
+  count++;
+}
+
+// 평균 RGB 계산
+const avgR = Math.round(totalR / count);
+const avgG = Math.round(totalG / count);
+const avgB = Math.round(totalB / count);
+
+// 결과 표시
+document.getElementById("rgbResult").textContent =
+  `평균 RGB: (${avgR}, ${avgG}, ${avgB})`;
   });
 </script>
 
