@@ -70,9 +70,12 @@
 
     const imageURL = URL.createObjectURL(file);
 
-    preview.onload = function() {
-      URL.revokeObjectURL(imageURL);
-    };
+preview.onload = function() {
+  URL.revokeObjectURL(imageURL);
+
+  document.getElementById("status").textContent =
+    "이미지 불러오기 완료";
+};
 
     preview.src = imageURL;
     document.getElementById("imageWrapper").style.display = "block";
