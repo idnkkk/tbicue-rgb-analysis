@@ -226,13 +226,12 @@ measurements[region] = {
 };
     
 
-document.getElementById("regionResults").innerHTML =
-  Object.entries(measurements)
-    .map(([key, rgb]) =>
-      `<p>${regionNames[key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
-    )
-    .join("") + differenceText;
-
+function rgbDifference(a, b) {
+  return Math.sqrt(
+    (a.r - b.r) ** 2 +
+    (a.g - b.g) ** 2 +
+    (a.b - b.b) ** 2
+  ).toFixed(2);
 }
 
 let differenceText = "";
@@ -251,15 +250,14 @@ if (measurements.cfpC && measurements.cfpBg) {
     }</p>`;
 }
 
-
 document.getElementById("regionResults").innerHTML =
   Object.entries(measurements)
     .map(([key, rgb]) =>
       `<p>${regionNames[key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
     )
-    .join("");
-
+    .join("") + differenceText;
   });
+  
 </script>
 </body>
 </html>
