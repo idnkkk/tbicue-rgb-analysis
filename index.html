@@ -224,6 +224,33 @@ measurements[region] = {
   g: avgG,
   b: avgB
 };
+    
+
+document.getElementById("regionResults").innerHTML =
+  Object.entries(measurements)
+    .map(([key, rgb]) =>
+      `<p>${regionNames[key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
+    )
+    .join("") + differenceText;
+
+}
+
+let differenceText = "";
+
+if (measurements.esatC && measurements.esatBg) {
+  differenceText +=
+    `<p>ESAT-6 C선과 배경 RGB 차이: ${
+      rgbDifference(measurements.esatC, measurements.esatBg)
+    }</p>`;
+}
+
+if (measurements.cfpC && measurements.cfpBg) {
+  differenceText +=
+    `<p>CFP-10 C선과 배경 RGB 차이: ${
+      rgbDifference(measurements.cfpC, measurements.cfpBg)
+    }</p>`;
+}
+
 
 document.getElementById("regionResults").innerHTML =
   Object.entries(measurements)
