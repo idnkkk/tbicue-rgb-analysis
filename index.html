@@ -643,13 +643,13 @@ function measureColorPatches() {
   ctx.drawImage(preview, 0, 0, w, h);
 
   // 키트 왼쪽 색상 패치의 임시 상대 좌표
-  const patches = [
-    { key: "refR", x: 0.09 },
-    { key: "refG", x: 0.14 },
-    { key: "refB", x: 0.19 },
-    { key: "refK", x: 0.24 },
-    { key: "refW", x: 0.29 }
-  ];
+const patches = [
+  { key: "refR", x: 0.065 },
+  { key: "refG", x: 0.115 },
+  { key: "refB", x: 0.165 },
+  { key: "refK", x: 0.215 },
+  { key: "refW", x: 0.265 }
+];
 
   for (const patch of patches) {
     const x = Math.round(
