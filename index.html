@@ -391,6 +391,26 @@ document.getElementById("autoMeasureBtn").addEventListener("click", function() {
     "RGB 자동 측정 완료";
 });
 
+
+document.getElementById("startCameraBtn")
+  .addEventListener("click", async function() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" },
+        audio: false
+      });
+
+      const video = document.getElementById("cameraPreview");
+      video.srcObject = stream;
+      await video.play();
+
+      document.getElementById("status").textContent =
+        "카메라 실행 중";
+    } catch (error) {
+      alert("카메라를 실행할 수 없습니다: " + error.message);
+    }
+  });
+
   
 </script>
 </body>
