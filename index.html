@@ -113,6 +113,16 @@
     pointer-events:none;
     display:none;
   "></div>
+  
+<div
+  id="patchMarkers"
+  style="
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  "
+></div>
+
 </div>
 
 
@@ -651,6 +661,8 @@ const patches = [
   { key: "refW", x: 0.265 }
 ];
 
+  const markerLayer = document.getElementById("patchMarkers");
+markerLayer.innerHTML = "";
   for (const patch of patches) {
     const x = Math.round(
       detectedKit.x + detectedKit.width * patch.x
@@ -659,6 +671,25 @@ const patches = [
     const y = Math.round(
       detectedKit.y + detectedKit.height * 0.50
     );
+
+    
+const marker = document.createElement("div");
+
+const scaleX = preview.clientWidth / w;
+const scaleY = preview.clientHeight / h;
+
+marker.style.position = "absolute";
+marker.style.left = (x * scaleX) + "px";
+marker.style.top = (y * scaleY) + "px";
+marker.style.width = "10px";
+marker.style.height = "10px";
+marker.style.borderRadius = "50%";
+marker.style.background = "#FFEB3B";
+marker.style.border = "2px solid #222";
+marker.style.transform = "translate(-50%, -50%)";
+marker.style.boxSizing = "border-box";
+
+markerLayer.appendChild(marker);
 
     const size = Math.max(
       4,
