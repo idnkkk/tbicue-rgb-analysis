@@ -250,6 +250,22 @@ if (measurements.cfpC && measurements.cfpBg) {
     }</p>`;
 }
 
+    
+if (measurements.esatT && measurements.esatBg) {
+  differenceText +=
+    `<p>ESAT-6 T선과 배경 RGB 차이: ${
+      rgbDifference(measurements.esatT, measurements.esatBg)
+    }</p>`;
+}
+
+if (measurements.cfpT && measurements.cfpBg) {
+  differenceText +=
+    `<p>CFP-10 T선과 배경 RGB 차이: ${
+      rgbDifference(measurements.cfpT, measurements.cfpBg)
+    }</p>`;
+}
+
+
 document.getElementById("regionResults").innerHTML =
   Object.entries(measurements)
     .map(([key, rgb]) =>
