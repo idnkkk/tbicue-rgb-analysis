@@ -64,3 +64,40 @@
       "이미지 불러오기 완료";
   });
 </script>
+
+
+<h3>RGB 분석 결과</h3>
+<p>사진을 클릭하면 해당 위치의 RGB 값이 표시됩니다.</p>
+<p id="rgbResult">RGB: 측정 대기 중</p>
+
+<canvas id="imageCanvas" style="display:none;"></canvas>
+
+<script>
+  const canvas = document.getElementById("imageCanvas");
+  const ctx = canvas.getContext("2d");
+
+  preview.addEventListener("click", function(event) {
+    const rect = preview.getBoundingClientRect();
+
+    const x = Math.floor(
+      (event.clientX - rect.left) *
+      preview.naturalWidth / rect.width
+    );
+
+    const y = Math.floor(
+      (event.clientY - rect.top) *
+      preview.naturalHeight / rect.height
+    );
+
+    canvas.width = preview.naturalWidth;
+    canvas.height = preview.naturalHeight;
+
+    ctx.drawImage(preview, 0, 0);
+
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+
+    document.getElementById("rgbResult").textContent =
+      `RGB: (${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+  });
+</script>
+
