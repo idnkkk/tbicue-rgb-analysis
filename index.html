@@ -772,14 +772,17 @@ markerLayer.appendChild(marker);
   canvas.height = h;
   ctx.drawImage(preview, 0, 0, w, h);
 
-  const testPoints = [
-    { key: "esatC", x: 0.305, y: 0.50 },
-    { key: "esatT", x: 0.3255, y: 0.50 },
-    { key: "esatBg", x: 0.315, y: 0.58 },
-    { key: "cfpC", x: 0.695, y: 0.50 },
-    { key: "cfpT", x: 0.6745, y: 0.50 },
-    { key: "cfpBg", x: 0.685, y: 0.58 }
-  ];
+ const testPoints = [
+  // 왼쪽 ESAT-6 검사창
+  { name: "ESAT C", x: 0.49, y: 0.50 },
+  { name: "ESAT T", x: 0.47, y: 0.50 },
+  { name: "ESAT 배경", x: 0.48, y: 0.58 },
+
+  // 오른쪽 CFP-10 검사창
+  { name: "CFP C", x: 0.76, y: 0.50 },
+  { name: "CFP T", x: 0.74, y: 0.50 },
+  { name: "CFP 배경", x: 0.75, y: 0.58 }
+];
 
   for (const point of testPoints) {
     const x = Math.round(detectedKit.x + detectedKit.width * point.x);
@@ -836,14 +839,14 @@ markerLayer.appendChild(marker);
 
 const testPoints = [
   // 왼쪽 ESAT-6
-  { name: "ESAT C", x: 0.305, y: 0.50 },
-  { name: "ESAT T", x: 0.3255, y: 0.50 },
-  { name: "ESAT 배경", x: 0.315, y: 0.58 },
+  { name: "ESAT C", x: 0.49, y: 0.50 },
+  { name: "ESAT T", x: 0.47, y: 0.50 },
+  { name: "ESAT 배경", x: 0.48, y: 0.58 },
 
   // 오른쪽 CFP-10
-  { name: "CFP C", x: 0.695, y: 0.50 },
-  { name: "CFP T", x: 0.6745, y: 0.50 },
-  { name: "CFP 배경", x: 0.685, y: 0.58 }
+  { name: "CFP C", x: 0.76, y: 0.50 },
+  { name: "CFP T", x: 0.74, y: 0.50 },
+  { name: "CFP 배경", x: 0.75, y: 0.58 }
 ];
 
   const markerLayer = document.getElementById("patchMarkers");
