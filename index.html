@@ -46,26 +46,35 @@
   background:#222;
 ">
   
+
 <video
   id="cameraPreview"
   autoplay
   playsinline
   muted
-  style="display:block;width:100%;"
+  style="
+    display:block;
+    width:100%;
+    height:auto;
+    background:#222;
+  "
 ></video>
 
-
-  <div style="
+<div
+  id="cameraGuide"
+  style="
     position:absolute;
-   left:5%;
-top:25%;
-width:90%;
-height:50%;
+    left:3%;
+    top:38%;
+    width:94%;
+    height:24%;
     border:3px dashed #168B90;
     border-radius:10px;
     box-sizing:border-box;
     pointer-events:none;
-  "></div>
+  "
+></div>
+
 </div>
 
 <p style="text-align:center;">
@@ -404,24 +413,36 @@ document.getElementById("autoMeasureBtn").addEventListener("click", function() {
 });
 
 
+
 document.getElementById("startCameraBtn")
   .addEventListener("click", async function() {
     try {
-const stream = await navigator.mediaDevices.getUserMedia({
-  video: { facingMode: "environment" },
-  audio: false
-});
-
       const video = document.getElementById("cameraPreview");
+
+      if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: "environment",
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        },
+        audio: false
+      });
+
       video.srcObject = stream;
       await video.play();
 
       document.getElementById("status").textContent =
         "카메라 실행 중";
+
     } catch (error) {
       alert("카메라를 실행할 수 없습니다: " + error.message);
     }
   });
+
 
 
 document.getElementById("captureBtn")
@@ -434,25 +455,76 @@ document.getElementById("captureBtn")
     }
 
    
+
+const guide = document.getElementById("cameraGuide");
+
+const videoRect = video.getBoundingClientRect();
+const guideRect = guide.getBoundingClientRect();
+
 const videoWidth = video.videoWidth;
 const videoHeight = video.videoHeight;
 
-// 가이드라인 영역: 좌우 5%, 위 25%, 높이 50%
-const cropX = Math.round(videoWidth * 0.05);
-const cropY = Math.round(videoHeight * 0.25);
-const cropWidth = Math.round(videoWidth * 0.90);
-const cropHeight = Math.round(videoHeight * 0.50);
+// 화면에 표시된 실제 영상 크기 계산
+const displayedWidth = videoRect.width;
+const displayedHeight = videoRect.height;
 
-// 잘라낸 영역 크기로 캔버스 설정
+const videoRatio = videoWidth / videoHeight;
+const displayRatio = displayedWidth / displayedHeight;
+
+let contentWidth, contentHeight;
+let offsetX = 0, offsetY = 0;
+
+if (videoRatio > displayRatio) {
+  contentWidth = displayedWidth;
+  contentHeight = displayedWidth / videoRatio;
+  offsetY = (displayedHeight - contentHeight) / 2;
+} else {
+  contentHeight = displayedHeight;
+  contentWidth = displayedHeight * videoRatio;
+  offsetX = (displayedWidth - contentWidth) / 2;
+}
+
+// 가이드라인과 실제 영상이 겹치는 영역
+const left = Math.max(
+  0, guideRect.left - videoRect.left - offsetX
+);
+const top = Math.max(
+  0, guideRect.top - videoRect.top - offsetY
+);
+
+const right = Math.min(
+  contentWidth,
+  guideRect.right - videoRect.left - offsetX
+);
+const bottom = Math.min(
+  contentHeight,
+  guideRect.bottom - videoRect.top - offsetY
+);
+
+if (right <= left || bottom <= top) {
+  alert("가이드라인 안에 카메라 영상이 없습니다.");
+  return;
+}
+
+// 화면 좌표를 원본 영상 좌표로 변환
+const cropX = Math.round(left / contentWidth * videoWidth);
+const cropY = Math.round(top / contentHeight * videoHeight);
+const cropWidth = Math.round(
+  (right - left) / contentWidth * videoWidth
+);
+const cropHeight = Math.round(
+  (bottom - top) / contentHeight * videoHeight
+);
+
 canvas.width = cropWidth;
 canvas.height = cropHeight;
 
-// 가이드라인 안쪽 영역만 추출
 ctx.drawImage(
   video,
   cropX, cropY, cropWidth, cropHeight,
   0, 0, cropWidth, cropHeight
 );
+
 
 
     const photoURL = canvas.toDataURL("image/png");
