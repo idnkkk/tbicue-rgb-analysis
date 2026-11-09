@@ -129,6 +129,7 @@ preview.onload = function() {
   const canvas = document.getElementById("imageCanvas");
   const ctx = canvas.getContext("2d");
   const measurements = {};
+  const regionPositions = {};
 
   preview.addEventListener("click", function(event) {
     const rect = preview.getBoundingClientRect();
@@ -230,7 +231,10 @@ measurements[region] = {
   g: avgG,
   b: avgB
 };
-    
+    regionPositions[region] = {
+  x: x / canvas.width,
+  y: y / canvas.height
+};
 
 function rgbDifference(a, b) {
   return Math.sqrt(
