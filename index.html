@@ -362,7 +362,10 @@ document.getElementById("regionResults").innerHTML =
 
 
 document.getElementById("autoMeasureBtn")
-  .addEventListener("click", measureColorPatches);
+  .addEventListener("click", function() {
+    measureColorPatches();
+    measureTestWindows();
+  });
 
 
 document.getElementById("startCameraBtn")
@@ -756,6 +759,74 @@ markerLayer.appendChild(marker);
     alert("먼저 키트 위치 자동 인식을 실행해주세요.");
     return;
   }
+    function measureTestWindows() {
+  if (!detectedKit) {
+    alert("먼저 키트 위치를 인식해주세요.");
+    return;
+  }
+
+  const w = preview.naturalWidth;
+  const h = preview.naturalHeight;
+
+  canvas.width = w;
+  canvas.height = h;
+  ctx.drawImage(preview, 0, 0, w, h);
+
+  const testPoints = [
+    { key: "esatC", x: 0.305, y: 0.50 },
+    { key: "esatT", x: 0.3255, y: 0.50 },
+    { key: "esatBg", x: 0.315, y: 0.58 },
+    { key: "cfpC", x: 0.695, y: 0.50 },
+    { key: "cfpT", x: 0.6745, y: 0.50 },
+    { key: "cfpBg", x: 0.685, y: 0.58 }
+  ];
+
+  for (const point of testPoints) {
+    const x = Math.round(detectedKit.x + detectedKit.width * point.x);
+    const y = Math.round(detectedKit.y + detectedKit.height * point.y);
+
+    const size = Math.max(4, Math.round(detectedKit.height * 0.08));
+    const sx = Math.max(0, Math.min(w - size, x - Math.floor(size / 2)));
+    const sy = Math.max(0, Math.min(h - size, y - Math.floor(size / 2)));
+
+    const pixels = ctx.getImageData(sx, sy, size, size).data;
+
+    let r = 0, g = 0, b = 0;
+    const count = pixels.length / 4;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      r += pixels[i];
+      g += pixels[i + 1];
+      b += pixels[i + 2];
+    }
+
+    measurements[point.key] = {
+      r: Math.round(r / count),
+      g: Math.round(g / count),
+      b: Math.round(b / count)
+    };
+  }
+
+  const names = {
+    esatC: "ESAT-6 C선",
+    esatT: "ESAT-6 T선",
+    esatBg: "ESAT-6 배경",
+    cfpC: "CFP-10 C선",
+    cfpT: "CFP-10 T선",
+    cfpBg: "CFP-10 배경"
+  };
+
+  const results = document.getElementById("regionResults");
+
+  results.innerHTML += "<h4>검사창 RGB 측정값</h4>" +
+    testPoints.map(point => {
+      const rgb = measurements[point.key];
+      return `<p>${names[point.key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`;
+    }).join("");
+
+  document.getElementById("status").textContent =
+    "검사창 6개 RGB 측정 완료";
+}
 
   const w = preview.naturalWidth;
   const h = preview.naturalHeight;
