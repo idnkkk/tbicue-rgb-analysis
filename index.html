@@ -593,7 +593,13 @@ for (let start = 0; start < mask.length; start++) {
   const ratio = Math.max(bw, bh) / Math.max(1, Math.min(bw, bh));
 
   // 길쭉한 키트 형태의 영역 우선
-  if (count > 30 && ratio > 3) {
+if (
+  count > 30 &&
+  ratio > 3 &&
+  ratio < 15 &&
+  bw > 20 &&
+  bh > 5
+) {
     const score = count * Math.min(ratio, 12);
 
     if (!best || score > best.score) {
