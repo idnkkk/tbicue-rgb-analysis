@@ -193,9 +193,9 @@ async function startCamera() {
   }
 
 
+  
 
-document.getElementById("captureBtn")
-  .addEventListener("click", function() {
+function capturePhoto() {
     const video = document.getElementById("cameraPreview");
 
     if (!video.videoWidth || !video.videoHeight) {
@@ -313,7 +313,7 @@ ctx.drawImage(
     document.getElementById("regionResults").textContent =
       "아직 측정된 영역이 없습니다.";
 
-  });
+  }
 
 
 function detectKit() {
@@ -713,6 +713,17 @@ function testTBiCUE(type) {
   `;
 }
 
+document.addEventListener("message", function(event) {
+  if (event.data === "capture") {
+    capturePhoto();
+  }
+});
+
+window.addEventListener("message", function(event) {
+  if (event.data === "capture") {
+    capturePhoto();
+  }
+});
 window.addEventListener("load", startCamera);
 
   
