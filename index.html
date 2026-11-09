@@ -51,16 +51,16 @@
   autoplay
   playsinline
   muted
-  style="display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#222;"
+  style="display:block;width:100%;"
 ></video>
 
 
   <div style="
     position:absolute;
-   left: 5%;
-top: 42%;
-width: 90%;
-height: 16%;
+   left:5%;
+top:25%;
+width:90%;
+height:50%;
     border:3px dashed #168B90;
     border-radius:10px;
     box-sizing:border-box;
@@ -407,16 +407,10 @@ document.getElementById("autoMeasureBtn").addEventListener("click", function() {
 document.getElementById("startCameraBtn")
   .addEventListener("click", async function() {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-       
-video: {
-  facingMode: "environment",
-  width: { ideal: 1280 },
-  height: { ideal: 720 }
-},
-
-        audio: false
-      });
+const stream = await navigator.mediaDevices.getUserMedia({
+  video: { facingMode: "environment" },
+  audio: false
+});
 
       const video = document.getElementById("cameraPreview");
       video.srcObject = stream;
@@ -445,9 +439,9 @@ const videoHeight = video.videoHeight;
 
 // 가이드라인 영역: 좌우 5%, 위 25%, 높이 50%
 const cropX = Math.round(videoWidth * 0.05);
-const cropY = Math.round(videoHeight * 0.42);
+const cropY = Math.round(videoHeight * 0.25);
 const cropWidth = Math.round(videoWidth * 0.90);
-const cropHeight = Math.round(videoHeight * 0.16);
+const cropHeight = Math.round(videoHeight * 0.50);
 
 // 잘라낸 영역 크기로 캔버스 설정
 canvas.width = cropWidth;
