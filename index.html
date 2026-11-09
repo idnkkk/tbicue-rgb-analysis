@@ -426,10 +426,27 @@ document.getElementById("captureBtn")
       return;
     }
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+   
+const videoWidth = video.videoWidth;
+const videoHeight = video.videoHeight;
 
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+// 가이드라인 영역: 좌우 5%, 위 25%, 높이 50%
+const cropX = Math.round(videoWidth * 0.05);
+const cropY = Math.round(videoHeight * 0.25);
+const cropWidth = Math.round(videoWidth * 0.90);
+const cropHeight = Math.round(videoHeight * 0.50);
+
+// 잘라낸 영역 크기로 캔버스 설정
+canvas.width = cropWidth;
+canvas.height = cropHeight;
+
+// 가이드라인 안쪽 영역만 추출
+ctx.drawImage(
+  video,
+  cropX, cropY, cropWidth, cropHeight,
+  0, 0, cropWidth, cropHeight
+);
+
 
     const photoURL = canvas.toDataURL("image/png");
 
