@@ -39,8 +39,28 @@
 
 <br><br>
 
-<img id="preview"
-     style="max-width:100%; display:none;">
+
+<div id="imageWrapper" style="
+  position:relative;
+  display:none;
+  width:fit-content;
+  max-width:100%;
+">
+  <img id="preview" style="
+    display:block;
+    max-width:100%;
+    height:auto;
+  ">
+
+  <div id="selectionBox" style="
+    position:absolute;
+    border:2px solid #168B90;
+    box-sizing:border-box;
+    pointer-events:none;
+    display:none;
+  "></div>
+</div>
+
 
 <script>
   const imageInput = document.getElementById("imageInput");
@@ -58,7 +78,8 @@
     };
 
     preview.src = imageURL;
-    preview.style.display = "block";
+    document.getElementById("imageWrapper").style.display = "block";
+    document.getElementById("selectionBox").style.display = "none";
 
     document.getElementById("status").textContent =
       "이미지 불러오기 완료";
@@ -101,8 +122,19 @@ const size = 10;
 const startX = Math.max(0, x - 5);
 const startY = Math.max(0, y - 5);
 
-const width = Math.min(size, canvas.width - startX);
-const height = Math.min(size, canvas.height - startY);
+
+const selectionBox = document.getElementById("selectionBox");
+
+const scaleX = preview.clientWidth / canvas.width;
+const scaleY = preview.clientHeight / canvas.height;
+
+selectionBox.style.left = (startX * scaleX) + "px";
+selectionBox.style.top = (startY * scaleY) + "px";
+selectionBox.style.width = (width * scaleX) + "px";
+selectionBox.style.height = (height * scaleY) + "px";
+
+selectionBox.style.display = "block";
+
 
 // 영역 내 픽셀 데이터 가져오기
 const imageData = ctx.getImageData(
