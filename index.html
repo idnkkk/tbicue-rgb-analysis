@@ -772,16 +772,14 @@ markerLayer.appendChild(marker);
   canvas.height = h;
   ctx.drawImage(preview, 0, 0, w, h);
 
- const testPoints = [
-  // 왼쪽 ESAT-6 검사창
-  { name: "ESAT C", x: 0.49, y: 0.50 },
-  { name: "ESAT T", x: 0.47, y: 0.50 },
-  { name: "ESAT 배경", x: 0.48, y: 0.58 },
+const testPoints = [
+  { key: "esatC", x: 0.49, y: 0.50 },
+  { key: "esatT", x: 0.47, y: 0.50 },
+  { key: "esatBg", x: 0.48, y: 0.58 },
 
-  // 오른쪽 CFP-10 검사창
-  { name: "CFP C", x: 0.76, y: 0.50 },
-  { name: "CFP T", x: 0.74, y: 0.50 },
-  { name: "CFP 배경", x: 0.75, y: 0.58 }
+  { key: "cfpC", x: 0.76, y: 0.50 },
+  { key: "cfpT", x: 0.74, y: 0.50 },
+  { key: "cfpBg", x: 0.75, y: 0.58 }
 ];
 
   for (const point of testPoints) {
