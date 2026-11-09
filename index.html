@@ -167,7 +167,10 @@ preview.onload = function() {
   키트 위치 자동 인식
 </button>
 <p id="detectKitResult">키트 인식 대기 중</p>
-
+<button id="testWindowBtn" type="button"
+  onclick="showTestWindowMarkers()">
+  검사창 위치 확인
+</button>
 
 <h3>측정 영역 선택</h3>
 
@@ -748,6 +751,59 @@ markerLayer.appendChild(marker);
     "색상 패치 5개 자동 측정 완료";
 }
 
+  function showTestWindowMarkers() {
+  if (!detectedKit) {
+    alert("먼저 키트 위치 자동 인식을 실행해주세요.");
+    return;
+  }
+
+  const w = preview.naturalWidth;
+  const h = preview.naturalHeight;
+
+  const scaleX = preview.clientWidth / w;
+  const scaleY = preview.clientHeight / h;
+
+  // 키트 전체 크기를 기준으로 한 임시 위치
+  const testPoints = [
+    { name: "ESAT C", x: 0.49, y: 0.40 },
+    { name: "ESAT T", x: 0.46, y: 0.40 },
+    { name: "ESAT 배경", x: 0.475, y: 0.58 },
+
+    { name: "CFP C", x: 0.76, y: 0.40 },
+    { name: "CFP T", x: 0.73, y: 0.40 },
+    { name: "CFP 배경", x: 0.745, y: 0.58 }
+  ];
+
+  const markerLayer = document.getElementById("patchMarkers");
+
+  // 기존 색상 패치 노란 점은 유지
+  markerLayer.querySelectorAll(".testMarker")
+    .forEach(marker => marker.remove());
+
+  for (const point of testPoints) {
+    const x = detectedKit.x + detectedKit.width * point.x;
+    const y = detectedKit.y + detectedKit.height * point.y;
+
+    const marker = document.createElement("div");
+
+    marker.className = "testMarker";
+    marker.style.position = "absolute";
+    marker.style.left = (x * scaleX) + "px";
+    marker.style.top = (y * scaleY) + "px";
+    marker.style.width = "10px";
+    marker.style.height = "10px";
+    marker.style.borderRadius = "50%";
+    marker.style.background = "#FF9800";
+    marker.style.border = "2px solid #222";
+    marker.style.transform = "translate(-50%, -50%)";
+    marker.style.boxSizing = "border-box";
+
+    markerLayer.appendChild(marker);
+  }
+
+  document.getElementById("status").textContent =
+    "검사창 6개 위치 표시 완료";
+}
   
 </script>
 </body>
