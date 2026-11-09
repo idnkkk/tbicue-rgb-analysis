@@ -76,6 +76,8 @@ document.getElementById("regionResults").textContent =
 preview.onload = function() {
   URL.revokeObjectURL(imageURL);
 
+  document.getElementById("autoMeasureBtn").disabled = false;
+
   document.getElementById("status").textContent =
     "이미지 불러오기 완료";
 };
