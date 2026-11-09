@@ -163,6 +163,7 @@ preview.onload = function() {
 <button id="autoMeasureBtn" type="button" >
   RGB 자동 측정
 </button>
+  
   <button id="detectKitBtn" type="button">
   키트 위치 자동 인식
 </button>
@@ -171,7 +172,14 @@ preview.onload = function() {
   onclick="showTestWindowMarkers()">
   검사창 위치 확인
 </button>
+<h3>판정 기능 테스트</h3>
 
+<button type="button" onclick="testTBiCUE('negative')">음성 테스트</button>
+<button type="button" onclick="testTBiCUE('positive')">양성 테스트</button>
+<button type="button" onclick="testTBiCUE('discordant')">불일치 테스트</button>
+<button type="button" onclick="testTBiCUE('invalid')">무효 테스트</button>
+
+<div id="testResult"></div>
 <h3>측정 영역 선택</h3>
 
 <select id="regionSelect">
@@ -940,6 +948,32 @@ function analyzeTBiCUE() {
 
   return judgeTBiCUE(esatC, esatT, cfpC, cfpT);
 }
+
+function testTBiCUE(type) {
+  let esatC = true;
+  let esatT = false;
+  let cfpC = true;
+  let cfpT = false;
+
+  if (type === "positive") {
+    esatT = true;
+    cfpT = true;
+  } else if (type === "discordant") {
+    esatT = true;
+  } else if (type === "invalid") {
+    esatC = false;
+  }
+
+  const analysis = judgeTBiCUE(esatC, esatT, cfpC, cfpT);
+
+  document.getElementById("testResult").innerHTML = `
+    <h4>테스트 결과</h4>
+    <p>ESAT-6: ${analysis.esat}</p>
+    <p>CFP-10: ${analysis.cfp}</p>
+    <p><strong>최종 판정: ${analysis.result}</strong></p>
+  `;
+}
+
   
 </script>
 </body>
