@@ -754,12 +754,7 @@ markerLayer.appendChild(marker);
     "색상 패치 5개 자동 측정 완료";
 }
 
-  function showTestWindowMarkers() {
-  if (!detectedKit) {
-    alert("먼저 키트 위치 자동 인식을 실행해주세요.");
-    return;
-  }
-    function measureTestWindows() {
+function measureTestWindows() {
   if (!detectedKit) {
     alert("먼저 키트 위치를 인식해주세요.");
     return;
@@ -825,11 +820,17 @@ const testPoints = [
       return `<p>${names[point.key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`;
     }).join("");
 
-  document.getElementById("status").textContent =
-    "검사창 6개 RGB 측정 완료";
+ document.getElementById("status").textContent =
+  "검사창 6개 RGB 측정 완료";
 }
 
-  const w = preview.naturalWidth;
+function showTestWindowMarkers() {
+  if (!detectedKit) {
+    alert("먼저 키트 위치 자동 인식을 실행해주세요.");
+    return;
+  }
+
+const w = preview.naturalWidth;
   const h = preview.naturalHeight;
 
   const scaleX = preview.clientWidth / w;
