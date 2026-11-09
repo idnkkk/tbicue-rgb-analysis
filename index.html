@@ -613,6 +613,33 @@ const testPoints = [
     cfpBg: "CFP-10 배경"
   };
 
+  const markerLayer = document.getElementById("patchMarkers");
+
+markerLayer.querySelectorAll(".testMarker")
+  .forEach(marker => marker.remove());
+
+const scaleX = preview.clientWidth / w;
+const scaleY = preview.clientHeight / h;
+
+for (const point of testPoints) {
+  const x = detectedKit.x + detectedKit.width * point.x;
+  const y = detectedKit.y + detectedKit.height * point.y;
+
+  const marker = document.createElement("div");
+  marker.className = "testMarker";
+
+  marker.style.position = "absolute";
+  marker.style.left = (x * scaleX) + "px";
+  marker.style.top = (y * scaleY) + "px";
+  marker.style.width = "8px";
+  marker.style.height = "8px";
+  marker.style.borderRadius = "50%";
+  marker.style.background = "#FF9800";
+  marker.style.border = "1px solid #222";
+  marker.style.transform = "translate(-50%, -50%)";
+
+  markerLayer.appendChild(marker);
+}
   const results = document.getElementById("regionResults");
 
   results.innerHTML += "<h4>검사창 RGB 측정값</h4>" +
