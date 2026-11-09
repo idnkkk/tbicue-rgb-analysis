@@ -822,6 +822,14 @@ const testPoints = [
 
  document.getElementById("status").textContent =
   "검사창 6개 RGB 측정 완료";
+  const analysis = analyzeTBiCUE();
+
+regionResults.innerHTML += `
+  <h4>항원별 판정 결과</h4>
+  <p>ESAT-6: ${analysis.esat}</p>
+  <p>CFP-10: ${analysis.cfp}</p>
+  <h4>최종 판정: ${analysis.result}</h4>
+`;
 }
 
 function showTestWindowMarkers() {
@@ -903,6 +911,34 @@ function judgeTBiCUE(esatC, esatT, cfpC, cfpT) {
   }
 
   return { result, esat, cfp };
+}
+  function detectLine(lineRGB, bgRGB, threshold = 20) {
+  if (!lineRGB || !bgRGB) {
+    return null;
+  }
+
+  const lineStrength = (lineRGB.g + lineRGB.b) / 2;
+  const bgStrength = (bgRGB.g + bgRGB.b) / 2;
+
+  return (bgStrength - lineStrength) > threshold;
+}
+
+function analyzeTBiCUE() {
+  const esatC = detectLine(measurements.esatC, measurements.esatBg);
+  const esatT = detectLine(measurements.esatT, measurements.esatBg);
+
+  const cfpC = detectLine(measurements.cfpC, measurements.cfpBg);
+  const cfpT = detectLine(measurements.cfpT, measurements.cfpBg);
+
+  if ([esatC, esatT, cfpC, cfpT].includes(null)) {
+    return {
+      result: "재검사",
+      esat: "판정불가",
+      cfp: "판정불가"
+    };
+  }
+
+  return judgeTBiCUE(esatC, esatT, cfpC, cfpT);
 }
   
 </script>
