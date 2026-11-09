@@ -22,7 +22,23 @@
       padding: 20px;
       border-radius: 12px;
     }
+#startCameraBtn {
+  display: none !important;
+}
   </style>
+  /* 사용하지 않는 기능 숨기기 */
+#imageInput,
+#autoMeasureBtn,
+#detectKitBtn,
+#detectKitResult,
+#testWindowBtn,
+#testResult,
+#regionSelect,
+#regionResults,
+#rgbResult,
+#imageWrapper {
+  display: none !important;
+}
 </head>
 <body>
   <div class="container">
@@ -32,7 +48,7 @@
   </div>
 
 
-<input type="file" id="imageInput" accept="image/*">
+<input type="file" id="imageInput" accept="image/*" style="display:none;">
 
 <h3>키트 촬영</h3>
 
@@ -172,15 +188,8 @@ preview.onload = function() {
   onclick="showTestWindowMarkers()">
   검사창 위치 확인
 </button>
-<h3>판정 기능 테스트</h3>
 
-<button type="button" onclick="testTBiCUE('negative')">음성 테스트</button>
-<button type="button" onclick="testTBiCUE('positive')">양성 테스트</button>
-<button type="button" onclick="testTBiCUE('discordant')">불일치 테스트</button>
-<button type="button" onclick="testTBiCUE('invalid')">무효 테스트</button>
 
-<div id="testResult"></div>
-<h3>측정 영역 선택</h3>
 
 <select id="regionSelect">
   
@@ -198,12 +207,12 @@ preview.onload = function() {
   <option value="cfpBg">CFP-10 배경</option>
 </select>
 
-<h3>영역별 RGB 측정값</h3>
+
 <div id="regionResults">
   아직 측정된 영역이 없습니다.
 </div>
 
-<p>사진을 클릭하면 해당 위치의 RGB 값이 표시됩니다.</p>
+
 <p id="rgbResult">RGB: 측정 대기 중</p>
 
 <canvas id="imageCanvas" style="display:none;"></canvas>
@@ -974,7 +983,9 @@ function testTBiCUE(type) {
   `;
 }
 
-  
+  window.addEventListener("load", function() {
+  document.getElementById("startCameraBtn").click();
+});
 </script>
 </body>
 </html>
