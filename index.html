@@ -651,6 +651,14 @@ for (const point of testPoints) {
  document.getElementById("status").textContent =
   "검사창 6개 RGB 측정 완료";
   const analysis = analyzeTBiCUE();
+  window.ReactNativeWebView?.postMessage(
+  JSON.stringify({
+    type: "analysisResult",
+    esat: analysis.esat,
+    cfp: analysis.cfp,
+    result: analysis.result
+  })
+);
 
 regionResults.innerHTML += `
   <h4>항원별 판정 결과</h4>
