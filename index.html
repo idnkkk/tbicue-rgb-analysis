@@ -26,19 +26,7 @@
   display: none !important;
 }
   </style>
-  /* 사용하지 않는 기능 숨기기 */
-#imageInput,
-#autoMeasureBtn,
-#detectKitBtn,
-#detectKitResult,
-#testWindowBtn,
-#testResult,
-#regionSelect,
-#regionResults,
-#rgbResult,
-#imageWrapper {
-  display: none !important;
-}
+
 </head>
 <body>
   <div class="container">
@@ -97,10 +85,7 @@ height:40%;
   키트를 가이드라인 안에 맞춰주세요.
 </p>
 
-<button id="startCameraBtn" type="button">
-  카메라 켜기
-</button>
- 
+
 <button id="captureBtn" type="button">
   사진 촬영
 </button>
@@ -159,7 +144,7 @@ document.getElementById("regionResults").textContent =
 preview.onload = function() {
   URL.revokeObjectURL(imageURL);
 
-  document.getElementById("autoMeasureBtn").disabled = false;
+
 
   document.getElementById("status").textContent =
     "이미지 불러오기 완료";
@@ -174,46 +159,10 @@ preview.onload = function() {
   });
 </script>
 
-
-
-<button id="autoMeasureBtn" type="button" >
-  RGB 자동 측정
-</button>
-  
-  <button id="detectKitBtn" type="button">
-  키트 위치 자동 인식
-</button>
-<p id="detectKitResult">키트 인식 대기 중</p>
-<button id="testWindowBtn" type="button"
-  onclick="showTestWindowMarkers()">
-  검사창 위치 확인
-</button>
-
-
-
-<select id="regionSelect">
-  
-<option value="refR">패치 - 빨강</option>
-<option value="refG">패치 - 초록</option>
-<option value="refB">패치 - 파랑</option>
-<option value="refK">패치 - 검정</option>
-<option value="refW">패치 - 흰색</option>
-
-  <option value="esatC">ESAT-6 C선</option>
-  <option value="esatT">ESAT-6 T선</option>
-  <option value="esatBg">ESAT-6 배경</option>
-  <option value="cfpC">CFP-10 C선</option>
-  <option value="cfpT">CFP-10 T선</option>
-  <option value="cfpBg">CFP-10 배경</option>
-</select>
-
-
 <div id="regionResults">
   아직 측정된 영역이 없습니다.
 </div>
 
-
-<p id="rgbResult">RGB: 측정 대기 중</p>
 
 <canvas id="imageCanvas" style="display:none;"></canvas>
 
@@ -224,169 +173,7 @@ preview.onload = function() {
   const regionPositions = {};
   let detectedKit = null;
 
-  preview.addEventListener("click", function(event) {
-    const rect = preview.getBoundingClientRect();
-
-    const x = Math.floor(
-      (event.clientX - rect.left) *
-      preview.naturalWidth / rect.width
-    );
-
-    const y = Math.floor(
-      (event.clientY - rect.top) *
-      preview.naturalHeight / rect.height
-    );
-
-    canvas.width = preview.naturalWidth;
-    canvas.height = preview.naturalHeight;
-
-    ctx.drawImage(preview, 0, 0);
-
-   
-
-const size = 20;
-
-// 클릭한 위치를 중심으로 측정 영역 설정
-const startX = Math.max(
-  0, Math.min(x - size / 2, canvas.width - size)
-);
-
-const startY = Math.max(
-  0, Math.min(y - size / 2, canvas.height - size)
-);
-
-// 측정 영역의 가로, 세로 크기
-const width = Math.min(size, canvas.width);
-const height = Math.min(size, canvas.height);
-
-
-
-const selectionBox = document.getElementById("selectionBox");
-
-const scaleX = preview.clientWidth / canvas.width;
-const scaleY = preview.clientHeight / canvas.height;
-
-selectionBox.style.left = (startX * scaleX) + "px";
-selectionBox.style.top = (startY * scaleY) + "px";
-selectionBox.style.width = (width * scaleX) + "px";
-selectionBox.style.height = (height * scaleY) + "px";
-
-selectionBox.style.display = "block";
-
-
-// 영역 내 픽셀 데이터 가져오기
-const imageData = ctx.getImageData(
-  startX, startY, width, height
-);
-
-const pixels = imageData.data;
-
-let totalR = 0;
-let totalG = 0;
-let totalB = 0;
-let count = 0;
-
-// 각 픽셀의 RGB 합산
-for (let i = 0; i < pixels.length; i += 4) {
-  totalR += pixels[i];
-  totalG += pixels[i + 1];
-  totalB += pixels[i + 2];
-  count++;
-}
-
-// 평균 RGB 계산
-const avgR = Math.round(totalR / count);
-const avgG = Math.round(totalG / count);
-const avgB = Math.round(totalB / count);
-
-// 결과 표시
-
-const region = document.getElementById("regionSelect").value;
-
-
-const regionNames = {
-  refR: "패치 - 빨강",
-  refG: "패치 - 초록",
-  refB: "패치 - 파랑",
-  refK: "패치 - 검정",
-  refW: "패치 - 흰색",
-
-  esatC: "ESAT-6 C선",
-  esatT: "ESAT-6 T선",
-  esatBg: "ESAT-6 배경",
-  cfpC: "CFP-10 C선",
-  cfpT: "CFP-10 T선",
-  cfpBg: "CFP-10 배경"
-};
-
-measurements[region] = {
-  r: avgR,
-  g: avgG,
-  b: avgB
-};
-    regionPositions[region] = {
-  x: x / canvas.width,
-  y: y / canvas.height
-};
-
-function rgbDifference(a, b) {
-  return Math.sqrt(
-    (a.r - b.r) ** 2 +
-    (a.g - b.g) ** 2 +
-    (a.b - b.b) ** 2
-  ).toFixed(2);
-}
-
-let differenceText = "";
-
-if (measurements.esatC && measurements.esatBg) {
-  differenceText +=
-    `<p>ESAT-6 C선과 배경 RGB 차이: ${
-      rgbDifference(measurements.esatC, measurements.esatBg)
-    }</p>`;
-}
-
-if (measurements.cfpC && measurements.cfpBg) {
-  differenceText +=
-    `<p>CFP-10 C선과 배경 RGB 차이: ${
-      rgbDifference(measurements.cfpC, measurements.cfpBg)
-    }</p>`;
-}
-
-    
-if (measurements.esatT && measurements.esatBg) {
-  differenceText +=
-    `<p>ESAT-6 T선과 배경 RGB 차이: ${
-      rgbDifference(measurements.esatT, measurements.esatBg)
-    }</p>`;
-}
-
-if (measurements.cfpT && measurements.cfpBg) {
-  differenceText +=
-    `<p>CFP-10 T선과 배경 RGB 차이: ${
-      rgbDifference(measurements.cfpT, measurements.cfpBg)
-    }</p>`;
-}
-
-
-document.getElementById("regionResults").innerHTML =
-  Object.entries(measurements)
-    .map(([key, rgb]) =>
-      `<p>${regionNames[key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
-    )
-    .join("") + differenceText;
-  });
-
-
-document.getElementById("autoMeasureBtn")
-  .addEventListener("click", function() {
-    measureColorPatches();
-    measureTestWindows();
-  });
-
-
-document.getElementById("startCameraBtn")
-  .addEventListener("click", async function() {
+async function startCamera() {
     try {
       const video = document.getElementById("cameraPreview");
 
@@ -412,7 +199,7 @@ document.getElementById("startCameraBtn")
     } catch (error) {
       alert("카메라를 실행할 수 없습니다: " + error.message);
     }
-  });
+  }
 
 
 
@@ -500,13 +287,25 @@ ctx.drawImage(
 
     const photoURL = canvas.toDataURL("image/png");
 
-    preview.onload = function() {
-      document.getElementById("status").textContent =
-        "사진 촬영 완료";
+   preview.onload = function() {
+  document.getElementById("status").textContent =
+    "키트 자동 분석 중";
 
-      document.getElementById("autoMeasureBtn").disabled = false;
-    };
+  detectedKit = null;
+  detectKit();
 
+  if (!detectedKit) {
+    document.getElementById("status").textContent =
+      "키트 인식 실패";
+    return;
+  }
+
+  measureColorPatches();
+  measureTestWindows();
+
+  document.getElementById("status").textContent =
+    "분석 완료";
+};
     preview.src = photoURL;
 
     document.getElementById("imageWrapper").style.display = "block";
@@ -523,13 +322,10 @@ ctx.drawImage(
     document.getElementById("regionResults").textContent =
       "아직 측정된 영역이 없습니다.";
 
-    document.getElementById("rgbResult").textContent =
-      "RGB: 측정 대기 중";
   });
 
 
-document.getElementById("detectKitBtn")
-  .addEventListener("click", function () {
+function detectKit() {
 
     if (!preview.complete || !preview.naturalWidth) {
       alert("먼저 키트 사진을 촬영해주세요.");
@@ -643,9 +439,8 @@ if (best) {
 }
 
     if (maxX < 0) {
-      document.getElementById("detectKitResult")
-        .textContent = "키트 후보를 찾지 못했습니다.";
-      return;
+detectedKit = null;
+return;
     }
     
 detectedKit = {
@@ -664,9 +459,7 @@ detectedKit = {
     box.style.height = ((maxY - minY) * scaleY) + "px";
     box.style.display = "block";
 
-    document.getElementById("detectKitResult")
-      .textContent = "키트 후보 영역을 표시했습니다.";
-  });
+}
 
 
 function measureColorPatches() {
@@ -849,60 +642,6 @@ regionResults.innerHTML += `
 `;
 }
 
-function showTestWindowMarkers() {
-  if (!detectedKit) {
-    alert("먼저 키트 위치 자동 인식을 실행해주세요.");
-    return;
-  }
-
-const w = preview.naturalWidth;
-  const h = preview.naturalHeight;
-
-  const scaleX = preview.clientWidth / w;
-  const scaleY = preview.clientHeight / h;
-
-const testPoints = [
-  // 왼쪽 ESAT-6
-  { name: "ESAT C", x: 0.49, y: 0.50 },
-  { name: "ESAT T", x: 0.47, y: 0.50 },
-  { name: "ESAT 배경", x: 0.48, y: 0.50 },
-
-  // 오른쪽 CFP-10
-  { name: "CFP C", x: 0.76, y: 0.50 },
-  { name: "CFP T", x: 0.74, y: 0.50 },
-  { name: "CFP 배경", x: 0.75, y: 0.50 }
-];
-
-  const markerLayer = document.getElementById("patchMarkers");
-
-  // 기존 색상 패치 노란 점은 유지
-  markerLayer.querySelectorAll(".testMarker")
-    .forEach(marker => marker.remove());
-
-  for (const point of testPoints) {
-    const x = detectedKit.x + detectedKit.width * point.x;
-    const y = detectedKit.y + detectedKit.height * point.y;
-
-    const marker = document.createElement("div");
-
-    marker.className = "testMarker";
-    marker.style.position = "absolute";
-    marker.style.left = (x * scaleX) + "px";
-    marker.style.top = (y * scaleY) + "px";
-    marker.style.width = "4px";
-    marker.style.height = "4px";
-    marker.style.borderRadius = "50%";
-    marker.style.background = "#FF9800";
-    marker.style.border = "2px solid #222";
-    marker.style.transform = "translate(-50%, -50%)";
-    marker.style.boxSizing = "border-box";
-
-    markerLayer.appendChild(marker);
-  }
-
-  document.getElementById("status").textContent =
-    "검사창 6개 위치 표시 완료";
-}
 
 function judgeTBiCUE(esatC, esatT, cfpC, cfpT) {
   // C선이 하나라도 없으면 무효
@@ -983,9 +722,9 @@ function testTBiCUE(type) {
   `;
 }
 
-  window.addEventListener("load", function() {
-  document.getElementById("startCameraBtn").click();
-});
+window.addEventListener("load", startCamera);
+
+  
 </script>
 </body>
 </html>
