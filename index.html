@@ -45,12 +45,15 @@
   border-radius:12px;
   background:#222;
 ">
-  <video id="cameraPreview"
-    autoplay
-    playsinline
-    muted
-    style="display:block;width:100%;">
-  </video>
+  
+<video
+  id="cameraPreview"
+  autoplay
+  playsinline
+  muted
+  style="display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#222;"
+></video>
+
 
   <div style="
     position:absolute;
@@ -405,7 +408,13 @@ document.getElementById("startCameraBtn")
   .addEventListener("click", async function() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" },
+       
+video: {
+  facingMode: "environment",
+  width: { ideal: 1280 },
+  height: { ideal: 720 }
+},
+
         audio: false
       });
 
