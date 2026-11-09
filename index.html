@@ -141,6 +141,10 @@ preview.onload = function() {
 <button id="autoMeasureBtn" type="button" >
   RGB 자동 측정
 </button>
+  <button id="detectKitBtn" type="button">
+  키트 위치 자동 인식
+</button>
+<p id="detectKitResult">키트 인식 대기 중</p>
 
 <h3>측정 영역 선택</h3>
 
@@ -477,7 +481,69 @@ ctx.drawImage(
       "RGB: 측정 대기 중";
   });
 
-  
+
+document.getElementById("detectKitBtn")
+  .addEventListener("click", function () {
+
+    if (!preview.complete || !preview.naturalWidth) {
+      alert("먼저 키트 사진을 촬영해주세요.");
+      return;
+    }
+
+    const w = preview.naturalWidth;
+    const h = preview.naturalHeight;
+
+    canvas.width = w;
+    canvas.height = h;
+    ctx.drawImage(preview, 0, 0, w, h);
+
+    const pixels = ctx.getImageData(0, 0, w, h).data;
+
+    let minX = w, minY = h;
+    let maxX = -1, maxY = -1;
+
+    for (let y = 0; y < h; y += 3) {
+      for (let x = 0; x < w; x += 3) {
+
+        const i = (y * w + x) * 4;
+        const r = pixels[i];
+        const g = pixels[i + 1];
+        const b = pixels[i + 2];
+
+        // 밝고 채도가 낮은 흰색 영역 후보
+        const brightness = (r + g + b) / 3;
+        const difference =
+          Math.max(r, g, b) - Math.min(r, g, b);
+
+        if (brightness > 175 && difference < 35) {
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+        }
+      }
+    }
+
+    if (maxX < 0) {
+      document.getElementById("detectKitResult")
+        .textContent = "키트 후보를 찾지 못했습니다.";
+      return;
+    }
+
+    const box = document.getElementById("selectionBox");
+    const scaleX = preview.clientWidth / w;
+    const scaleY = preview.clientHeight / h;
+
+    box.style.left = (minX * scaleX) + "px";
+    box.style.top = (minY * scaleY) + "px";
+    box.style.width = ((maxX - minX) * scaleX) + "px";
+    box.style.height = ((maxY - minY) * scaleY) + "px";
+    box.style.display = "block";
+
+    document.getElementById("detectKitResult")
+      .textContent = "키트 후보 영역을 표시했습니다.";
+  });
+
 </script>
 </body>
 </html>
