@@ -32,3 +32,35 @@
   </div>
 </body>
 </html>
+
+<p id="status">분석 대기 중</p>
+
+<input type="file" id="imageInput" accept="image/*">
+
+<br><br>
+
+<img id="preview"
+     style="max-width:100%; display:none;">
+
+<script>
+  const imageInput = document.getElementById("imageInput");
+  const preview = document.getElementById("preview");
+
+  imageInput.addEventListener("change", function(event) {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const imageURL = URL.createObjectURL(file);
+
+    preview.onload = function() {
+      URL.revokeObjectURL(imageURL);
+    };
+
+    preview.src = imageURL;
+    preview.style.display = "block";
+
+    document.getElementById("status").textContent =
+      "이미지 불러오기 완료";
+  });
+</script>
