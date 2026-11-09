@@ -30,10 +30,7 @@
     <p>검사 이미지 분석 시스템</p>
     <p id="status">분석 대기 중</p>
   </div>
-</body>
-</html>
 
-<p id="status">분석 대기 중</p>
 
 <input type="file" id="imageInput" accept="image/*">
 
@@ -116,11 +113,22 @@
     ctx.drawImage(preview, 0, 0);
 
    
+
 const size = 100;
 
-// 클릭 위치를 중심으로 측정 영역 설정
-const startX = Math.max(0, x - 5);
-const startY = Math.max(0, y - 5);
+// 클릭한 위치를 중심으로 측정 영역 설정
+const startX = Math.max(
+  0, Math.min(x - size / 2, canvas.width - size)
+);
+
+const startY = Math.max(
+  0, Math.min(y - size / 2, canvas.height - size)
+);
+
+// 측정 영역의 가로, 세로 크기
+const width = Math.min(size, canvas.width);
+const height = Math.min(size, canvas.height);
+
 
 
 const selectionBox = document.getElementById("selectionBox");
@@ -166,4 +174,5 @@ document.getElementById("rgbResult").textContent =
   `평균 RGB: (${avgR}, ${avgG}, ${avgB})`;
   });
 </script>
-
+</body>
+</html>
