@@ -29,16 +29,12 @@
 
 </head>
 <body>
-  <div class="container">
-    <h2>TBiCUE RGB Analyzer</h2>
-    <p>검사 이미지 분석 시스템</p>
-    <p id="status">분석 대기 중</p>
-  </div>
+  <p id="status" style="display:none;"></p>
+ 
 
 
 <input type="file" id="imageInput" accept="image/*" style="display:none;">
 
-<h3>키트 촬영</h3>
 
 <div style="
   position:relative;
@@ -81,9 +77,6 @@ height:40%;
 
 </div>
 
-<p style="text-align:center;">
-  키트를 가이드라인 안에 맞춰주세요.
-</p>
 
 
 <button id="captureBtn" type="button">
@@ -159,9 +152,7 @@ preview.onload = function() {
   });
 </script>
 
-<div id="regionResults">
-  아직 측정된 영역이 없습니다.
-</div>
+<div id="regionResults" style="display:none;"></div>
 
 
 <canvas id="imageCanvas" style="display:none;"></canvas>
