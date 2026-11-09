@@ -878,6 +878,32 @@ const testPoints = [
   document.getElementById("status").textContent =
     "검사창 6개 위치 표시 완료";
 }
+
+function judgeTBiCUE(esatC, esatT, cfpC, cfpT) {
+  // C선이 하나라도 없으면 무효
+  if (!esatC || !cfpC) {
+    return {
+      result: "재검사",
+      esat: "판정불가",
+      cfp: "판정불가"
+    };
+  }
+
+  const esat = esatT ? "검출" : "미검출";
+  const cfp = cfpT ? "검출" : "미검출";
+
+  let result;
+
+  if (esatT && cfpT) {
+    result = "양성";
+  } else if (!esatT && !cfpT) {
+    result = "음성";
+  } else {
+    result = "재검사";
+  }
+
+  return { result, esat, cfp };
+}
   
 </script>
 </body>
