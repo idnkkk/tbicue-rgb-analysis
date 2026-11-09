@@ -67,6 +67,9 @@
     const file = event.target.files[0];
 
     if (!file) return;
+    Object.keys(measurements).forEach(key => delete measurements[key]);
+document.getElementById("regionResults").textContent =
+  "아직 측정된 영역이 없습니다.";
 
     const imageURL = URL.createObjectURL(file);
 
@@ -87,7 +90,24 @@ preview.onload = function() {
 </script>
 
 
-<h3>RGB 분석 결과</h3>
+
+<h3>측정 영역 선택</h3>
+
+<select id="regionSelect">
+  <option value="reference">레퍼런스 패치</option>
+  <option value="esatC">ESAT-6 C선</option>
+  <option value="esatT">ESAT-6 T선</option>
+  <option value="esatBg">ESAT-6 배경</option>
+  <option value="cfpC">CFP-10 C선</option>
+  <option value="cfpT">CFP-10 T선</option>
+  <option value="cfpBg">CFP-10 배경</option>
+</select>
+
+<h3>영역별 RGB 측정값</h3>
+<div id="regionResults">
+  아직 측정된 영역이 없습니다.
+</div>
+
 <p>사진을 클릭하면 해당 위치의 RGB 값이 표시됩니다.</p>
 <p id="rgbResult">RGB: 측정 대기 중</p>
 
@@ -96,6 +116,7 @@ preview.onload = function() {
 <script>
   const canvas = document.getElementById("imageCanvas");
   const ctx = canvas.getContext("2d");
+  const measurements = {};
 
   preview.addEventListener("click", function(event) {
     const rect = preview.getBoundingClientRect();
@@ -173,8 +194,32 @@ const avgG = Math.round(totalG / count);
 const avgB = Math.round(totalB / count);
 
 // 결과 표시
-document.getElementById("rgbResult").textContent =
-  `평균 RGB: (${avgR}, ${avgG}, ${avgB})`;
+
+const region = document.getElementById("regionSelect").value;
+
+const regionNames = {
+  reference: "레퍼런스 패치",
+  esatC: "ESAT-6 C선",
+  esatT: "ESAT-6 T선",
+  esatBg: "ESAT-6 배경",
+  cfpC: "CFP-10 C선",
+  cfpT: "CFP-10 T선",
+  cfpBg: "CFP-10 배경"
+};
+
+measurements[region] = {
+  r: avgR,
+  g: avgG,
+  b: avgB
+};
+
+document.getElementById("regionResults").innerHTML =
+  Object.entries(measurements)
+    .map(([key, rgb]) =>
+      `<p>${regionNames[key]}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
+    )
+    .join("");
+
   });
 </script>
 </body>
