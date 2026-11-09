@@ -72,6 +72,11 @@
 <button id="startCameraBtn" type="button">
   카메라 켜기
 </button>
+ 
+<button id="captureBtn" type="button">
+  사진 촬영
+</button>
+ 
 
   
 <br><br>
@@ -409,6 +414,50 @@ document.getElementById("startCameraBtn")
     } catch (error) {
       alert("카메라를 실행할 수 없습니다: " + error.message);
     }
+  });
+
+
+document.getElementById("captureBtn")
+  .addEventListener("click", function() {
+    const video = document.getElementById("cameraPreview");
+
+    if (!video.videoWidth || !video.videoHeight) {
+      alert("먼저 카메라를 켜주세요.");
+      return;
+    }
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    const photoURL = canvas.toDataURL("image/png");
+
+    preview.onload = function() {
+      document.getElementById("status").textContent =
+        "사진 촬영 완료";
+
+      document.getElementById("autoMeasureBtn").disabled = false;
+    };
+
+    preview.src = photoURL;
+
+    document.getElementById("imageWrapper").style.display = "block";
+    document.getElementById("selectionBox").style.display = "none";
+
+    Object.keys(measurements).forEach(
+      key => delete measurements[key]
+    );
+
+    Object.keys(regionPositions).forEach(
+      key => delete regionPositions[key]
+    );
+
+    document.getElementById("regionResults").textContent =
+      "아직 측정된 영역이 없습니다.";
+
+    document.getElementById("rgbResult").textContent =
+      "RGB: 측정 대기 중";
   });
 
   
