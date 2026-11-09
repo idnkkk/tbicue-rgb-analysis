@@ -93,7 +93,7 @@ preview.onload = function() {
 
 
 
-<button id="autoMeasureBtn" type="button" disabled>
+<button id="autoMeasureBtn" type="button" >
   RGB 자동 측정
 </button>
 
@@ -283,6 +283,74 @@ document.getElementById("regionResults").innerHTML =
     )
     .join("") + differenceText;
   });
+
+document.getElementById("autoMeasureBtn").addEventListener("click", function() {
+  if (!preview.complete || !preview.naturalWidth) {
+    alert("먼저 이미지를 업로드해 주세요.");
+    return;
+  }
+
+  const regions = Object.keys(regionPositions);
+
+  if (regions.length === 0) {
+    alert("먼저 측정 영역을 클릭해서 좌표를 저장해 주세요.");
+    return;
+  }
+
+  canvas.width = preview.naturalWidth;
+  canvas.height = preview.naturalHeight;
+  ctx.drawImage(preview, 0, 0);
+
+  const size = 20;
+
+  for (const region of regions) {
+    const pos = regionPositions[region];
+
+    const width = Math.min(size, canvas.width);
+    const height = Math.min(size, canvas.height);
+
+    const startX = Math.max(0, Math.min(
+      Math.floor(pos.x * canvas.width - width / 2),
+      canvas.width - width
+    ));
+
+    const startY = Math.max(0, Math.min(
+      Math.floor(pos.y * canvas.height - height / 2),
+      canvas.height - height
+    ));
+
+    const pixels = ctx.getImageData(
+      startX, startY, width, height
+    ).data;
+
+    let r = 0, g = 0, b = 0;
+
+    for (let i = 0; i < pixels.length; i += 4) {
+      r += pixels[i];
+      g += pixels[i + 1];
+      b += pixels[i + 2];
+    }
+
+    const count = pixels.length / 4;
+
+    measurements[region] = {
+      r: Math.round(r / count),
+      g: Math.round(g / count),
+      b: Math.round(b / count)
+    };
+  }
+
+  document.getElementById("regionResults").innerHTML =
+    Object.entries(measurements)
+      .map(([key, rgb]) =>
+        `<p>${key}: RGB(${rgb.r}, ${rgb.g}, ${rgb.b})</p>`
+      )
+      .join("");
+
+  document.getElementById("status").textContent =
+    "RGB 자동 측정 완료";
+});
+
   
 </script>
 </body>
