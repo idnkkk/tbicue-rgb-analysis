@@ -502,30 +502,96 @@ document.getElementById("detectKitBtn")
 
     const pixels = ctx.getImageData(0, 0, w, h).data;
 
-    let minX = w, minY = h;
-    let maxX = -1, maxY = -1;
 
-    for (let y = 0; y < h; y += 3) {
-      for (let x = 0; x < w; x += 3) {
+const step = 3;
+const cols = Math.ceil(w / step);
+const rows = Math.ceil(h / step);
 
-        const i = (y * w + x) * 4;
-        const r = pixels[i];
-        const g = pixels[i + 1];
-        const b = pixels[i + 2];
+const mask = new Uint8Array(cols * rows);
+const visited = new Uint8Array(cols * rows);
 
-        // 밝고 채도가 낮은 흰색 영역 후보
-        const brightness = (r + g + b) / 3;
-        const difference =
-          Math.max(r, g, b) - Math.min(r, g, b);
+// 흰색 키트 후보 픽셀 분류
+for (let gy = 0; gy < rows; gy++) {
+  for (let gx = 0; gx < cols; gx++) {
+    const x = Math.min(gx * step, w - 1);
+    const y = Math.min(gy * step, h - 1);
+    const i = (y * w + x) * 4;
 
-        if (brightness > 175 && difference < 35) {
-          minX = Math.min(minX, x);
-          minY = Math.min(minY, y);
-          maxX = Math.max(maxX, x);
-          maxY = Math.max(maxY, y);
-        }
-      }
+    const r = pixels[i];
+    const g = pixels[i + 1];
+    const b = pixels[i + 2];
+
+    const min = Math.min(r, g, b);
+    const max = Math.max(r, g, b);
+
+    if (min > 170 && max - min < 30) {
+      mask[gy * cols + gx] = 1;
     }
+  }
+}
+
+let best = null;
+
+// 서로 연결된 흰색 영역 탐색
+for (let start = 0; start < mask.length; start++) {
+  if (!mask[start] || visited[start]) continue;
+
+  const queue = [start];
+  visited[start] = 1;
+
+  let head = 0;
+  let count = 0;
+  let left = cols, right = 0;
+  let top = rows, bottom = 0;
+
+  while (head < queue.length) {
+    const id = queue[head++];
+    const x = id % cols;
+    const y = Math.floor(id / cols);
+
+    count++;
+    left = Math.min(left, x);
+    right = Math.max(right, x);
+    top = Math.min(top, y);
+    bottom = Math.max(bottom, y);
+
+    const neighbors = [
+      x > 0 ? id - 1 : -1,
+      x < cols - 1 ? id + 1 : -1,
+      y > 0 ? id - cols : -1,
+      y < rows - 1 ? id + cols : -1
+    ];
+
+    for (const next of neighbors) {
+      if (next < 0 || visited[next] || !mask[next]) continue;
+      visited[next] = 1;
+      queue.push(next);
+    }
+  }
+
+  const bw = right - left + 1;
+  const bh = bottom - top + 1;
+  const ratio = Math.max(bw, bh) / Math.max(1, Math.min(bw, bh));
+
+  // 길쭉한 키트 형태의 영역 우선
+  if (count > 30 && ratio > 3) {
+    const score = count * Math.min(ratio, 12);
+
+    if (!best || score > best.score) {
+      best = { left, right, top, bottom, score };
+    }
+  }
+}
+
+let minX = w, minY = h;
+let maxX = -1, maxY = -1;
+
+if (best) {
+  minX = best.left * step;
+  minY = best.top * step;
+  maxX = Math.min(w - 1, (best.right + 1) * step);
+  maxY = Math.min(h - 1, (best.bottom + 1) * step);
+}
 
     if (maxX < 0) {
       document.getElementById("detectKitResult")
