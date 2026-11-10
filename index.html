@@ -575,15 +575,14 @@ function measureTestWindows() {
   ctx.drawImage(preview, 0, 0, w, h);
 
 const testPoints = [
-  { key: "esatC", x: 0.3850, y: 0.50 },
-  { key: "esatT", x: 0.4410, y: 0.50 },
-  { key: "esatBg", x: 0.4227, y: 0.50 },
+  { key: "esatC", x: 0.4050, y: 0.50 },
+  { key: "esatT", x: 0.4310, y: 0.50 },
+  { key: "esatBg", x: 0.4180, y: 0.50 },
 
-  { key: "cfpC", x: 0.8130, y: 0.50 },
-  { key: "cfpT", x: 0.7781, y: 0.50 },
-  { key: "cfpBg", x: 0.7956, y: 0.50 }
+  { key: "cfpC", x: 0.7980, y: 0.50 },
+  { key: "cfpT", x: 0.7930, y: 0.50 },
+  { key: "cfpBg", x: 0.7850, y: 0.50 }
 ];
-
   for (const point of testPoints) {
     const x = Math.round(detectedKit.x + detectedKit.width * point.x);
     const y = Math.round(detectedKit.y + detectedKit.height * point.y);
