@@ -79,9 +79,7 @@ height:40%;
 
 
 
-<button id="captureBtn" type="button">
-  사진 촬영
-</button>
+
  
 
   
@@ -642,10 +640,10 @@ for (const point of testPoints) {
   marker.style.width = "4px";
   marker.style.height = "4px";
   marker.style.borderRadius = "50%";
-  marker.style.background =
-  (point.key === "esatC" || point.key === "cfpC")
-    ? "#00BFFF"
-    : "#FF9800";
+ marker.style.background =
+  point.key.endsWith("C") ? "#00BFFF" :
+  point.key.endsWith("T") ? "#EF4444" :
+  "#FF9800";
   marker.style.border = "1px solid #222";
   marker.style.transform = "translate(-50%, -50%)";
 
