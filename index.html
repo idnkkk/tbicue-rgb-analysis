@@ -684,8 +684,10 @@ function judgeTBiCUE(esatC, esatT, cfpC, cfpT) {
 
   let result;
 
-if (esatT || cfpT) {
+if (esatT && cfpT) {
   result = "양성";
+} else if (esatT || cfpT) {
+  result = "양성 의심";
 } else {
   result = "음성";
 }
