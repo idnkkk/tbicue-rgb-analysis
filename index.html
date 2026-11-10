@@ -286,10 +286,18 @@ ctx.drawImage(
   detectKit();
 
   if (!detectedKit) {
-    document.getElementById("status").textContent =
-      "키트 인식 실패";
-    return;
-  }
+  document.getElementById("status").textContent =
+    "키트 인식 실패";
+
+  window.ReactNativeWebView?.postMessage(
+    JSON.stringify({
+      type: "kitDetectionFailed",
+      result: "재촬영"
+    })
+  );
+
+  return;
+}
 
   measureColorPatches();
   measureTestWindows();
