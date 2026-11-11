@@ -417,7 +417,18 @@ if (
   bw > 20 &&
   bh > 5
 ) {
-    const score = count * Math.min(ratio, 12);
+    const centerX = (left + right) / 2;
+const centerY = (top + bottom) / 2;
+
+const distanceX = Math.abs(centerX - cols / 2) / (cols / 2);
+const distanceY = Math.abs(centerY - rows / 2) / (rows / 2);
+
+const centerWeight = Math.max(
+  0.2,
+  1 - 0.5 * distanceX - 0.3 * distanceY
+);
+
+const score = count * Math.min(ratio, 12) * centerWeight;
 
     if (!best || score > best.score) {
       best = { left, right, top, bottom, score };
