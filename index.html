@@ -360,9 +360,29 @@ for (let gy = 0; gy < rows; gy++) {
     const min = Math.min(r, g, b);
     const max = Math.max(r, g, b);
 
-    if (min > 170 && max - min < 30) {
-      mask[gy * cols + gx] = 1;
+    // 좌우로 가까운 흰색 영역의 작은 틈 연결
+const originalMask = mask.slice();
+const gap = 3;
+
+for (let gy = 0; gy < rows; gy++) {
+  for (let gx = gap; gx < cols - gap; gx++) {
+    const index = gy * cols + gx;
+
+    if (originalMask[index]) continue;
+
+    let leftFound = false;
+    let rightFound = false;
+
+    for (let d = 1; d <= gap; d++) {
+      if (originalMask[index - d]) leftFound = true;
+      if (originalMask[index + d]) rightFound = true;
     }
+
+    if (leftFound && rightFound) {
+      mask[index] = 1;
+    }
+  }
+}
   }
 }
 
