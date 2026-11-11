@@ -293,13 +293,16 @@ ctx.drawImage(
   document.getElementById("status").textContent =
     "키트 인식 실패";
 
-  window.ReactNativeWebView?.postMessage(
-    JSON.stringify({
-      type: "kitDetectionFailed",
-      result: "재촬영"
-    })
-  );
+const failureMessage = JSON.stringify({
+  type: "kitDetectionFailed",
+  result: "재촬영"
+});
 
+if (window.ReactNativeWebView?.postMessage) {
+  window.ReactNativeWebView.postMessage(failureMessage);
+} else if (window.parent !== window) {
+  window.parent.postMessage(failureMessage, "*");
+}
   return;
 }
 
