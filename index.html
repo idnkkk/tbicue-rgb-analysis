@@ -740,8 +740,8 @@ if (esatT && cfpT) {
 }
 
 function analyzeTBiCUE() {
-  const esatC = detectLine(measurements.esatC, measurements.esatBg);
-  const esatT = detectLine(measurements.esatT, measurements.esatBg);
+  const esatC = detectLine(measurements.esatC, measurements.esatBg, 8);
+  const esatT = detectLine(measurements.esatT, measurements.esatBg, 8);
 
   const cfpC = detectLine(measurements.cfpC, measurements.cfpBg);
   const cfpT = detectLine(measurements.cfpT, measurements.cfpBg);
